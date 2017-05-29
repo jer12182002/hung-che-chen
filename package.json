@@ -1,19 +1,15 @@
 {
-  "name": "package.json",
+  "name": "web322",
   "version": "1.0.0",
-  "main": "sever.js",
+  "description": "",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "author": "hung-che,chen",
   "license": "ISC",
   "dependencies": {
     "express": "^4.15.3"
-  },
-  "devDependencies": {},
-  "repository": {
-    "type": "git",
-    "url": "sever.js"
-  },
-  "description": ""
+  }
 }
