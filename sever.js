@@ -19,5 +19,5 @@ app.get("/about", function(req,res){
 });
 
 // setup http server to listen on HTTP_PORT
-app.listen(HTTP_PORT, onHttpStart);
 app.use(express.static('public'));
+app.listen(HTTP_PORT, onHttpStart);
