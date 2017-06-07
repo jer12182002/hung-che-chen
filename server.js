@@ -6,6 +6,10 @@
 * Name: __hung-che,chen____ Student ID: _115472169____ Date: __may,29,2017______________ *
 * Online (Heroku) Link: _https://warm-taiga-21988.herokuapp.com________
 * ********************************************************************************/
+
+
+var express = require('./data-service.js');
+
 var express = require("express");
 var app = express();
 
@@ -31,3 +35,21 @@ app.get("/about", function(req,res){
 
 // setup http server to listen on HTTP_PORT
 app.listen(HTTP_PORT, onHttpStart);
+
+app.get("/",(req,res)=>{
+  res.send("Hello World!");
+});
+
+app.get("/employees",(req,res)=>{
+  if(req.query.status){
+    res.json({message: req.query.status});
+  }else if(req.query.manager){
+    res.json({message: req.query.manager});
+  }else if(req.query.department){
+    res.json({message: req.query.department});
+  }else{
+    res.status(404);
+    res.send("Page Not Found");
+    
+  }
+});
