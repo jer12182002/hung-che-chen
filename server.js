@@ -48,8 +48,8 @@ app.get("/employees",(req,res)=>{
   }else if(req.query.department){
     res.json({message: req.query.department});
   }else{
-    res.status(404);
-    res.send("Page Not Found");
-    
+    //res.status(404);
+    //res.send("Page Not Found");
+    res.status(404).send("Page Not Found");
   }
 });
