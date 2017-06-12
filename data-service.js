@@ -5,16 +5,16 @@ const fs=require('fs');
 
 function initialize(){
     var count=1;
-   
     return new Promise(function(resolve, reject){ // place our code inside a "Promise" function
        fs.readFile('./data/employees.json',(err,data)=>{
            if(err){
             reject(err);
         }else{
-            var employees=JSON.parse(employees);
+            employees[]=JSON.parse(employees);
             count--;
             if(!count){
                  fs.readFile('./data/departments.json');
+                 departments[]=JSON.parse(departments);
                  if(employees.lenght||departments.length){
                      reject("unable to read file");
                  }else{
