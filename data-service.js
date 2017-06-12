@@ -133,3 +133,51 @@ function getDepartments(){  //return full array
     });
 }
 
+initialize().then((msg)=>{
+            res.json(msg);
+        }).catch((errMsg)=>{
+            res.json({message: errMsg});
+        });
+
+getAllEmployees().then((msg)=>{
+            res.json(msg);
+        }).catch((errMsg)=>{
+            res.json({message: errMsg});
+        });
+
+
+getEmployeesByStatus().then((msg)=>{
+            res.json(msg);
+        }).catch((errMsg)=>{
+            res.json({message: errMsg});
+        });
+
+getEmployeesByDepartment().then((msg)=>{
+            res.json(msg);
+        }).catch((errMsg)=>{
+            res.json({message: errMsg});
+        });
+
+getEmployeesByManager().then((msg)=>{
+            res.json(msg);
+        }).catch((errMsg)=>{
+            res.json({message: errMsg});
+        });
+
+getEmployeeByNum().then((msg)=>{
+            res.json(msg);
+        }).catch((errMsg)=>{
+            res.json({message: errMsg});
+        });
+
+getManagers().then((msg)=>{
+            res.json(msg);
+        }).catch((errMsg)=>{
+            res.json({message: errMsg});
+        });
+
+getDepartments().then((msg)=>{
+            res.json(msg);
+        }).catch((errMsg)=>{
+            res.json({message: errMsg});
+        });
