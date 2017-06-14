@@ -34,7 +34,7 @@ app.get("/about", function(req,res){
 app.listen(HTTP_PORT, onHttpStart);
 
 app.get("/",(req,res)=>{
-  res.send("Hello World!");
+   res.sendFile(path.join(__dirname + "/views/home.html"));
 });
 
 app.get("/employees", function(req,res){
