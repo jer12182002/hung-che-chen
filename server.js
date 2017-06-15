@@ -6,18 +6,30 @@
 * Name: __hung-che,chen____ Student ID: _115472169____ Date: __June,11,2017________ *
 * Online (Heroku) Link: _https://warm-taiga-21988.herokuapp.com________
 * ********************************************************************************/
+
+
 var express = require("express");
 var app = express();
 var path = require("path");
 
 var data_service = require('./data-service.js');
-var HTTP_PORT = process.env.PORT || 8080;
+var HTTP_PORT = process.env.PORT || 8000;
 
 app.use(express.static('public'));
 
 // call this function after the http server starts listening for requests
-function onHttpStart() {
+/*function onHttpStart() {
   console.log("Express http server listening on port:" + HTTP_PORT);
+}*/
+function onHttpStart() {
+    console.log("Express http server listening on port:" + HTTP_PORT);
+    return new Promise ((res,req)=>{
+    data_service.initialize().then((data)=>{
+      console.log(data)
+    }).catch((err)=>{
+      console.log(err);
+    });
+});
 }
 
 // setup a 'route' to listen on the default url path (http://localhost)
@@ -30,17 +42,10 @@ app.get("/about", function(req,res){
    res.sendFile(path.join(__dirname + "/views/about.html"));
 });
 
-// setup http server to listen on HTTP_PORT
-//app.listen(HTTP_PORT, onHttpStart);
-
-app.get("/",(req,res)=>{
-   res.sendFile(path.join(__dirname + "/views/home.html"));
-});
 
 
 
-
-app.get("/employees", function(req,res){
+/*app.get("/employees", function(req,res){
 
     if(req.query.status){
       data_service.getEmployeesByStatus(req.query.status).then((data)=>{
@@ -67,9 +72,27 @@ app.get("/employees", function(req,res){
         res.json({message: err});
       });
     }
+});*/
+
+app.get("/employees", function(req,res){
+      data_service.getAllEmployees().then((data)=>{
+        res.json(data);
+      }).catch((err)=>{
+        res.json({message: err});
+      });
 });
 
-app.get("/employee/:num", function(req,res){
+
+app.get("/employee/?status", function(req,res){
+  data_service.getEmployeesByStatus(req.params.num).then((data)=>{
+    res.json(data);
+  }).catch((err)=>{
+      res.json({message: err});
+  });
+});
+
+
+app.get("/employee/?num", function(req,res){
   data_service.getEmployeeByNum(req.params.num).then((data)=>{
     res.json(data);
   }).catch((err)=>{
@@ -94,7 +117,7 @@ app.get("/departments", function(req,res){
 });
 
 app.use(function(req, res) {
-  res.status(404).send("Sorry!!!!!!!>>>Page Not Found! <<<:(");
+  res.status(404).send("Page Not Found");
 });
 
 //app.listen(HTTP_PORT, onHttpStart);
