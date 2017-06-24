@@ -88,9 +88,11 @@ app.get("/employee/:empNum", (req, res) => {
 app.get("/managers", (req,res) => {
   
     dataService.getManagers().then((data) => {
-      res.json(data);
+     // res.json(data);
+      res.render("employeeList", { data: data, title: "Employees (Managers)" });
     }).catch((err) => {
-      res.json({message:"no results"});
+      //res.json({message:"no results"});
+      res.render("employeeList", { data: {}, title: "Employees (Managers)" });
     });
 
 });  // (view an employee by employeeId)
