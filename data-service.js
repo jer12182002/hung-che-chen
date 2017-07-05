@@ -2,7 +2,7 @@ const fs = require('fs');
 
 var employees = [];
 var departments = [];
-var empCount=0;
+var empCount = 0;
 
 module.exports.initialize = function () {
 
@@ -15,21 +15,23 @@ module.exports.initialize = function () {
                 reject("could not open employees.json");
             }else{
                 employees = JSON.parse(data);
+                empCount = employees.length;
 
                 fs.readFile('./data/departments.json', (err, data) => {
                     if (err) {
                         reject("could not open departments.json");
                     }else{
                         departments = JSON.parse(data);
-                        empCount=employees.length;
+                        
                         resolve();
+
                     }
+                    
                 });
             }
         });
     });
-};
-
+}
 
 module.exports.getAllEmployees = function () {
     return new Promise(function (resolve, reject) {  
@@ -144,30 +146,30 @@ module.exports.getDepartments = function () {
 
 };
 
-module.exports.addEmployee = (employeeInfo) => {
-    empCount++;
-    employeeNum+=empCount;
-    //console.log( employeeNum);
-    return new Promise((resolve, reject) => {
-        employess.push(employeeInfo);
-        if (employess.length == 0) {
-            reject("Error");
-        }
-        resolve(employess);
+module.exports.addEmployee = function (employeeData) {
+    return new Promise(function (resolve, reject) {
+
+        employeeData.isManager = (employeeData.isManager) ? true : false;
+
+        empCount++;
+        employeeData.employeeNum = empCount;
+        employees.push(employeeData);
+
+        resolve();
     });
-}
 
+};
 
-module.exports.updateEmployee = (employeeInfo) => {
-    return new Promise((resolve, reject) => {
-        for (let i = 0; i < employess.length; i++) {
-            if (employess[i].employeeNum == employeeData.employeeNum) {
-                employees[i]=employeeInfo;
+module.exports.updateEmployee = function (employeeData) {
+
+    employeeData.isManager = (employeeData.isManager) ? true : false;
+
+    return new Promise(function (resolve, reject) {
+        for(let i=0; i < employees.length; i++){
+            if(employees[i].employeeNum == employeeData.employeeNum){
+                employees[i] = employeeData;
             }
         }
-        if (employess.length == 0) {
-            reject("Error");
-        }
-        resolve(employess);
+        resolve();
     });
-}
+};
