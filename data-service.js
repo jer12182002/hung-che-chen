@@ -160,16 +160,16 @@ module.exports.addEmployee = function (employeeData) {
 
 };
 
-module.exports.updateEmployee = function (employeeData) {
-
+module.exports.updateEmployee = (employeeData) =>{   
     employeeData.isManager = (employeeData.isManager) ? true : false;
-
-    return new Promise(function (resolve, reject) {
-        for(let i=0; i < employees.length; i++){
+    return new Promise( (resolve, reject) =>{
+        for(let i = 0; i < employees.length; i++){
             if(employees[i].employeeNum == employeeData.employeeNum){
                 employees[i] = employeeData;
-            }
+            }}
+        if (employees.length == 0) {
+                    reject("error");
         }
-        resolve();
+        else resolve();
     });
-};
+}
