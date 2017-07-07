@@ -125,7 +125,7 @@ app.post("/employees/add", (req, res) => {
 
 app.post("/employee/update", (req, res) => { 
     
-    dataService.updateEmployee(req.body).then( (data) => {
+  dataService.updateEmployee(req.body).then( (data) => {
       console.log(req.body); 
       res.redirect("/employees"); 
     }).catch(function(err){

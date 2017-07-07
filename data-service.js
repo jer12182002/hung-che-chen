@@ -1,4 +1,11 @@
 const fs = require('fs');
+const Sequelize = require('sequelize');
+var sequelize = new Sequelize('database', 'user', 'password', {
+    host: 'host',
+    dialect: 'postgres', port: 5432, dialectOptions: {
+        ssl: true
+    }
+});
 
 var employees = [];
 var departments = [];
@@ -10,23 +17,23 @@ module.exports.initialize = function () {
 
     return new Promise(function (resolve, reject) {
 
-        fs.readFile('./data/employees.json', (err, data) =>{
+        fs.readFile('./data/employees.json', (err, data) => {
             if (err) {
                 reject("could not open employees.json");
-            }else{
+            } else {
                 employees = JSON.parse(data);
                 empCount = employees.length;
 
                 fs.readFile('./data/departments.json', (err, data) => {
                     if (err) {
                         reject("could not open departments.json");
-                    }else{
+                    } else {
                         departments = JSON.parse(data);
-                        
+
                         resolve();
 
                     }
-                    
+
                 });
             }
         });
@@ -34,7 +41,7 @@ module.exports.initialize = function () {
 }
 
 module.exports.getAllEmployees = function () {
-    return new Promise(function (resolve, reject) {  
+    return new Promise(function (resolve, reject) {
         if (employees.length == 0) {
             reject("query returned 0 results");
         }
@@ -160,16 +167,17 @@ module.exports.addEmployee = function (employeeData) {
 
 };
 
-module.exports.updateEmployee = (employeeData) =>{   
+module.exports.updateEmployee = (employeeData) => {
     employeeData.isManager = (employeeData.isManager) ? true : false;
-    return new Promise( (resolve, reject) =>{
-        for(let i = 0; i < employees.length; i++){
-            if(employees[i].employeeNum == employeeData.employeeNum){
+    return new Promise((resolve, reject) => {
+        for (let i = 0; i < employees.length; i++) {
+            if (employees[i].employeeNum == employeeData.employeeNum) {
                 employees[i] = employeeData;
-            }}
-        if (employees.length == 0) {
-                    reject("error");
+            }
         }
-        else resolve();
+        if (employees.length == 0) {
+            reject("error");
+        }
+        resolve(employees);
     });
 }
