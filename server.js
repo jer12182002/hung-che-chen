@@ -133,6 +133,40 @@ app.post("/employee/update", (req, res) => {
   });
 });
 
+
+app.get("/departments/add", (req, res) => {
+    res.render("addDepartment",{title: "Department"});
+});
+
+
+app.post("/departments/add", (req, res) => {
+    data_service.addDepartment(req.body).then((data) => {
+        res.redirect("/departments");
+    }).catch(() => {
+        console.log(err);
+    });
+});
+
+
+app.post("/department/update", (req,res) => {
+    data_service.updateDepartment(req.body).then((data) => {
+        res.redirect("/departments");
+    });
+});
+
+
+app.get("/department/:departmentId", (req, res) => {
+    data_service.getDepartmentById(req.params.departmentId).then((data) => {
+        res.render("department", {
+           data: data
+        });
+    }).catch((err) => {
+        res.status(404).send("Department Not Found");
+    });
+});
+
+
+
 app.use((req, res) => {
   res.status(404).send("Page Not Found");
 });

@@ -225,4 +225,64 @@ module.exports.updateEmployee = function(employeeData){
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
 
+module.exports.addDepartment = function(departmentData){
+    return new Promise((resolve, reject) => {
+        sequelize.sync().then(() => {
+            for(let x in departmentData){
+                if(departmentData[x] == "") {
+                    departmentData[x] = null;
+                }
+            }
+            Department.create({
+                departmentId: departmentData.departmentId,
+                departmentName: departmentData.departmentName
+            }).then(() => {
+                resolve(Department);
+            }).catch((err) => {
+                reject("unable to create department.");
+            });
+        }).catch(() => {
+            reject("unable to create department.");
+        });
+    });
+};
+
+
+module.exports.updateDepartment = function(departmentData){
+    return new Promise((resolve, reject) => {
+        sequelize.sync().then(() => {
+            for(let x in departmentData){
+                if(departmentData[x] == "") {
+                    departmentData[x] = null;
+                }
+            }
+            Department.update({
+                departmentName: departmentData.departmentName
+            }, { where: {
+                departmentId: departmentData.departmentId
+            }}).then(() =>{
+                resolve(Department);
+            }).catch((err) => {
+                reject("unable to create department.");
+            });
+        }).catch(() => {
+            reject("unable to create department.");
+        });
+    });
+}
+
+
+
+module.exports.getDepartmentById = function(id){
+    return new Promise((resolve, reject) => {
+        sequelize.sync().then(() => {
+            resolve(Department.findAll({
+                where:{
+                    departmentId: id
+                }}));
+        }).catch((err) => {
+            reject("unable to find department");
+        });
+    });
+}
 
