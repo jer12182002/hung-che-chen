@@ -286,3 +286,16 @@ module.exports.getDepartmentById = function(id){
     });
 }
 
+
+module.exports.deleteEmployeeByNum = function(empNum){
+    return new Promise((resolve, reject) => {
+        sequelize.sync().then(() => {
+            resolve(Employee.destroy({
+                where:{
+                    employeeNum: empNum
+                }}));
+        }).catch((err) => {
+            reject();
+        });
+    });
+};

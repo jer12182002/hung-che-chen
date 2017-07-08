@@ -166,6 +166,16 @@ app.get("/department/:departmentId", (req, res) => {
 });
 
 
+app.get("/employee/delete/:empNum", (req, res) => {
+    data_service.deleteEmployeeByNum(req.params.empNum).then((data) => {
+        res.redirect("/employees");
+    }).catch((err) => {
+        res.status(500).send("Unable to Remove Employee / Employee not found");
+    });
+});
+
+
+
 
 app.use((req, res) => {
   res.status(404).send("Page Not Found");
