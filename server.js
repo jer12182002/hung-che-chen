@@ -1,3 +1,14 @@
+/*********************************************************************************
+* WEB322 – Assignment 05 
+* I declare that this assignment is my own work in accordance with Seneca Academic Policy. No part of this 
+* assignment has been copied manually or electronically from any other source (including web sites) or 
+* distributed to other students. 
+* 
+* Name: _HUNG-CHE,CHEN_____ Student ID: _115472169___ Date: __2017/07/08____ 
+* 
+* Online (Heroku) Link: ________________________________________________________ 
+* ********************************************************************************/
+
 var express = require("express");
 var app = express();
 var path = require("path");
@@ -9,27 +20,18 @@ var HTTP_PORT = process.env.PORT || 3000;
 
 app.use(express.static('public'));
 
-app.listen(HTTP_PORT, onHttpStart);
+// app.listen(HTTP_PORT, onHttpStart);
 
-function onHttpStart() {
-    console.log("Express http server listening on: " + HTTP_PORT);
-    return new Promise((res, req) => {
-        dataService.initialize().then((data) => {
-            console.log(data)
-        }).catch((err) => {
-            console.log(err);
-        });
-    });
-}
+
 
 
 
 // setup http server to listen on HTTP_PORT
-// dataService.initialize().then(function () {
-//   app.listen(HTTP_PORT, onHttpStart());
-// }).catch(function (err) {
-//   console.log(err);
-// });
+dataService.initialize().then(function () {
+  app.listen(HTTP_PORT, onHttpStart());
+}).catch(function (err) {
+  console.log(err);
+});
 
 //////////////////////////////////////////////////
 
