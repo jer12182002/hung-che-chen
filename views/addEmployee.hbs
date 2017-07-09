@@ -86,14 +86,16 @@
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="department">Department</label>{{#if departments}}
+                            <label for="department">Department</label>
+                            {{#if departments}}
                                 <select class="form-control" name="department" id="department">
-                                    <option value="">Please&nbsp;Choose&nbsp;Department</option>{{#each departments}}
-                                    <option value="{{departmentId}}">{{departmentName}}</option>{{/each}}
-                                </select>{{else}}
-                                <select class="form-control" name="department" id="department">
-                                    <option value="">No&nbsp;Departments</option>
-                                </select>{{/if}}
+                                {{#each departments}}
+                                    <option value="{{departmentId}}" {{#if selected}} selected {{/if}} >{{departmentName}} </option>
+                                {{/each}}
+                                </select>
+                                {{else}}
+                                    <div>No Departments</div>
+                                {{/if}}
                         </div>
                     </div>
                 </div>

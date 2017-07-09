@@ -13,10 +13,6 @@ sequelize.authenticate().then(() => {
     console.log('Unable to connect to the database:', err);
 });
 
-
-//var employees = [];
-//var departments = [];
-//var empCount = 0;
 var Employee = sequelize.define('Employee',{
     employeeNum:{
         type: Sequelize.INTEGER,
@@ -38,8 +34,8 @@ var Employee = sequelize.define('Employee',{
     department: Sequelize.INTEGER,
     hireDate: Sequelize.STRING
     }, {
-        createdAt: false, 
-        updatedAt: false 
+        createdAt: false,
+        updatedAt: false
 });
 
 var Department = sequelize.define('Department',{
@@ -50,12 +46,22 @@ var Department = sequelize.define('Department',{
     },
     departmentName: Sequelize.STRING
     }, {
-        createdAt: false, 
-        updatedAt: false 
+        createdAt: false,
+        updatedAt: false
 });
 
 
 module.exports.initialize = function(){
+    function onHttpStart() {
+    console.log("Express http server listening on: " + HTTP_PORT);
+    return new Promise((res, req) => {
+        dataService.initialize().then((data) => {
+            console.log(data)
+        }).catch((err) => {
+            console.log(err);
+        });
+    });
+}
     return new Promise((resolve, reject) => {
         sequelize.sync().then((Employee) => {
             resolve();

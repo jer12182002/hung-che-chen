@@ -5,9 +5,33 @@ var dataService = require("./data-service.js");
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 
-var HTTP_PORT = process.env.PORT || 8080;
+var HTTP_PORT = process.env.PORT || 3000;
 
 app.use(express.static('public'));
+
+app.listen(HTTP_PORT, onHttpStart);
+
+function onHttpStart() {
+    console.log("Express http server listening on: " + HTTP_PORT);
+    return new Promise((res, req) => {
+        dataService.initialize().then((data) => {
+            console.log(data)
+        }).catch((err) => {
+            console.log(err);
+        });
+    });
+}
+
+
+
+// setup http server to listen on HTTP_PORT
+// dataService.initialize().then(function () {
+//   app.listen(HTTP_PORT, onHttpStart());
+// }).catch(function (err) {
+//   console.log(err);
+// });
+
+//////////////////////////////////////////////////
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -29,9 +53,9 @@ app.engine(".hbs", exphbs({
 app.set("view engine", ".hbs");
 
 // call this function after the http server starts listening for requests
-function onHttpStart() {
-  console.log("Express http server listening on: " + HTTP_PORT);
-}
+// function onHttpStart() {
+//   console.log("Express http server listening on: " + HTTP_PORT);
+// }
 
 // setup a 'route' to listen on the default url path (http://localhost)
 app.get("/", (req, res) => {
@@ -82,14 +106,44 @@ app.get("/employees", (req, res) => {
 });
 
 app.get("/employee/:empNum", (req, res) => {
-
-  dataService.getEmployeeByNum(req.params.empNum).then((data) => {
-    res.render("employee", { data: data });
-  }).catch((err) => {
-    res.status(404).send("Employee Not Found");
-  });
-
+    // initialize an empty object to store the values
+    let viewData = {};
+    dataService.getEmployeeByNum(req.params.empNum).then((data) => {
+        viewData.data = data; //store employee data in the "viewData" object as "data"
+    }).catch(() => {
+        viewData.data = null; // set employee to null if there was an error
+    }).then(dataService.getDepartments).then((data) => {
+        viewData.departments = data; // store department data in the "viewData" object as "departments"
+                                     // loop through viewData.departments and once we have found the departmentId that matches
+                                     // the employee's "department" value, add a "selected" property to the matching
+                                     // viewData.departments object
+        for (let i = 0; i < viewData.departments.length; i++) {
+            if (viewData.departments[i].departmentId == viewData.data[0].department) {
+                viewData.departments[i].selected = true;
+            }
+        }
+      
+    }).catch(() => {
+        viewData.departments = []; // set departments to empty if there was an error
+    }).then(() => {
+        if (viewData.data == null){ // if no employee - return an error
+           
+            res.status(404).send("Employee Not Found!!!");
+        } else {
+             res.render("employee", { viewData: viewData }); // render the "employee" view
+        }
+    });
 });
+
+// app.get("/employee/:empNum", (req, res) => {
+
+//   dataService.getEmployeeByNum(req.params.empNum).then((departments) => {
+//     res.render("employee", { data: departments });
+//   }).catch((err) => {
+//     res.status(404).send("Employee Not Found");
+//   });
+
+// });
 
 app.get("/managers", (req, res) => {
 
@@ -111,8 +165,14 @@ app.get("/departments", (req, res) => {
 
 });
 
-app.get("/employees/add", (req,res) => {
-  res.render("addEmployee");
+
+app.get("/employees/add", (req, res) => {
+    dataService.getDepartments().then((data) => {
+        // res.send(data); Test 
+        res.render("addEmployee",{departments: data});
+    }).catch((err) => {
+        res.render("addEmployee", {departments: []});
+    });
 });
 
 app.post("/employees/add", (req, res) => {
@@ -121,11 +181,10 @@ app.post("/employees/add", (req, res) => {
   });
 });
 
-app.post("/employee/update", (req, res) => { 
-    
+app.post("/employee/update", (req, res) => {
   dataService.updateEmployee(req.body).then( (data) => {
-      console.log(req.body); 
-      res.redirect("/employees"); 
+      console.log(req.body);
+      res.redirect("/employees");
     }).catch(function(err){
       console.log(err);
   });
@@ -133,12 +192,12 @@ app.post("/employee/update", (req, res) => {
 
 
 app.get("/departments/add", (req, res) => {
-    res.render("addDepartment",{title: "Department"});
+    res.render("addDepartments", {title: "Department"});
 });
 
 
 app.post("/departments/add", (req, res) => {
-    data_service.addDepartment(req.body).then((data) => {
+    dataService.addDepartment(req.body).then((data) => {
         res.redirect("/departments");
     }).catch(() => {
         console.log(err);
@@ -147,14 +206,14 @@ app.post("/departments/add", (req, res) => {
 
 
 app.post("/department/update", (req,res) => {
-    data_service.updateDepartment(req.body).then((data) => {
+    dataService.updateDepartment(req.body).then((data) => {
         res.redirect("/departments");
     });
 });
 
 
 app.get("/department/:departmentId", (req, res) => {
-    data_service.getDepartmentById(req.params.departmentId).then((data) => {
+    dataService.getDepartmentById(req.params.departmentId).then((data) => {
         res.render("department", {
            data: data
         });
@@ -165,7 +224,7 @@ app.get("/department/:departmentId", (req, res) => {
 
 
 app.get("/employee/delete/:empNum", (req, res) => {
-    data_service.deleteEmployeeByNum(req.params.empNum).then((data) => {
+    dataService.deleteEmployeeByNum(req.params.empNum).then((data) => {
         res.redirect("/employees");
     }).catch((err) => {
         res.status(500).send("Unable to Remove Employee / Employee not found");
@@ -173,18 +232,6 @@ app.get("/employee/delete/:empNum", (req, res) => {
 });
 
 
-
-
 app.use((req, res) => {
   res.status(404).send("Page Not Found");
 });
-
-// setup http server to listen on HTTP_PORT
-dataService.initialize().then(function () {
-  app.listen(HTTP_PORT, onHttpStart);
-}).catch(function () {
-  console.log("unable to start dataService");
-});
-
-//////////////////////////////////////////////////
-
