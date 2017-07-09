@@ -5,8 +5,6 @@ var dataService = require("./data-service.js");
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 
-
-
 var HTTP_PORT = process.env.PORT || 8080;
 
 app.use(express.static('public'));
