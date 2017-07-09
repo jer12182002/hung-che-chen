@@ -20,18 +20,29 @@ var HTTP_PORT = process.env.PORT || 8080;
 
 app.use(express.static('public'));
 
-// app.listen(HTTP_PORT, onHttpStart);
+app.listen(HTTP_PORT, onHttpStart);
 
+
+function onHttpStart() {
+    console.log("Express http server listening on: " + HTTP_PORT);
+    return new Promise((res, req) => {
+        data_service.initialize().then((data) => {
+            console.log(data)
+        }).catch((err) => {
+            console.log(err);
+        });
+    });
+}
 
 
 
 
 // setup http server to listen on HTTP_PORT
-dataService.initialize().then(function () {
-  app.listen(HTTP_PORT, onHttpStart());
-}).catch(function (err) {
-  console.log(err);
-});
+// dataService.initialize().then(function () {
+//   app.listen(HTTP_PORT, onHttpStart());
+// }).catch(function (err) {
+//   console.log(err);
+// });
 
 //////////////////////////////////////////////////
 
