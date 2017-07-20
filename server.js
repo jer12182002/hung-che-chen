@@ -13,6 +13,7 @@ var express = require("express");
 var app = express();
 var path = require("path");
 var dataService = require("./data-service.js");
+const dataServiceComments = require("./data-service-comments.js");
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 
@@ -30,6 +31,10 @@ function onHttpStart() {
             console.log(data)
         }).catch((err) => {
             console.log(err);
+        });
+          dataServiceComments,initialize().then(function(){
+          }).catch((err)=>{
+          console.log(err);
         });
     });
 }
@@ -77,9 +82,12 @@ app.get("/", (req, res) => {
 
 // setup another route to listen on /about
 app.get("/about", (req, res) => {
-  res.render("about");
+    dataServiceComments.getAllComments().then((dataFromPromise) => {
+        res.render("about", {data: dataFromPromise});
+    }).catch(() => {
+        res.render("about");
+    });
 });
-
 // NEW ROUTES FOR ASSIGNMENT 3 ///////////////////
 
 app.get("/employees", (req, res) => {
@@ -244,6 +252,23 @@ app.get("/employee/delete/:empNum", (req, res) => {
     });
 });
 
+app.post("/about/addComment", (req, res) => {
+    dataServiceComments.addComment(req.body).then((data) => {
+        res.redirect("/about");
+    }).catch(() => {
+        res.reject("error to the console");
+        res.redirect("/about");
+    });
+});
+
+app.post("/about/addReply", (req, res) => {
+    dataServiceComments.addReply(req.body).then((data) => {
+        res.redirect("/about");
+    }).catch((err) => {
+        reject("error to the console");
+        redirect("/about");
+    });
+});
 
 app.use((req, res) => {
   res.status(404).send("Page Not Found");

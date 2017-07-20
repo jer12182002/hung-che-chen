@@ -1,15 +1,67 @@
-
-   <div class="container">
-	   <div class="row">
-				<section class="main col-md-12">
-					<article>
-					<h2>Hung-Che,Chen - "the developer"</h2>
-					<h3> About </h3>
-					<p>I am currently studing in Seneca College</p>
-					<p>This is my second year in the computer department</p>
-					<p>I think I will be a web developer after I graduate.</p>
-					</article>
-				</section>
+<div class="container">
+	<div class="row">
+		<section class="main col-md-12">
+			<article>
+				<h2>Hung-Che,Chen - "the developer"</h2>
+				<h3> About </h3>
+				<p>I am currently studing in Seneca College</p>
+				<p>This is my second year in the computer department</p>
+				<p>I think I will be a web developer after I graduate.</p>
+			</article>
+		</section>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<h3>Leave a Comment</h3>
+		<div class="well">
+			<div class="row">
+				<div class="col-md-12">
+					COMMENT FORM
+				</div>
+			</div>
 		</div>
 	</div>
-   
+</div>
+{{#if data}}
+<div class="row">
+	<div class="col-md-12">
+		<h3>All Comments</h3>
+		<hr />
+	</div>
+</div>
+{{/if}} {{#each data}}
+<div class="row">
+	<div class="col-md-12">
+		<div class="well">
+			<div class="row">
+				<div class="col-md-12">
+					COMMENT[{{@index}}]<br /><br />
+				</div>
+			</div>
+			{{#each replies}}
+			<div class="row">
+				<div class="col-md-12">
+					<div class="well">REPLY[{{@index}}]</div>
+				</div>
+			</div>
+			{{/each}}
+			<div class="row">
+				<div class="col-md-12">
+					<button class="btn btn-primary btn-sm pull-right" data-toggle="collapse" data-target="#reply-
+{{_id}}" aria-expanded="false">Reply</button>
+				</div>
+			</div>
+		</div>
+		<div class="collapse" id="reply-{{_id}}">
+			<div class="well">
+				<div class="row">
+					<div class="col-md-12">
+						REPLY FORM
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{{/each}}
