@@ -1,6 +1,4 @@
 //const fs = require('fs');
-
-console.log("+++++++++++++++++++");
 const Sequelize = require('sequelize');
 var sequelize = new Sequelize('d6aguqpd1crrta', 'xujhrkbrwhwgtv', '02ee72beb19c187b9edfb240c9baf99d7f4fcb5b2a3a44daf37da7949b00f774', {
     host: 'ec2-23-21-96-159.compute-1.amazonaws.com',
