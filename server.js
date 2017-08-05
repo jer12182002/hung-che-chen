@@ -61,11 +61,8 @@ app.listen(HTTP_PORT, function onHttpStart() {
             console.log(err);
         });
         dataServiceAuth.initialize().then(() => {
-            console.log("\n");
-            console.log(chalk.green("====================================================================="));
-            console.log(chalk.green(">>> Call initialize Suceess!!! where from data-service-auth.js    <<<"));
-            console.log(chalk.green("====================================================================="));
-            console.log("\n");
+            console.log("data-service-auth.js    initialize success!!");
+          
            }).catch((err) => {
                console.log(err);
         });
