@@ -21,7 +21,7 @@ const clientSessions = require("client-sessions");
 const dataServiceAuth = require("./data-service-auth");
 
 
-var HTTP_PORT = process.env.PORT || 8000;
+var HTTP_PORT = process.env.PORT || 8080;
 
 function ensureLogin(req, res, next) {
   if (!req.session.user) {
@@ -51,15 +51,23 @@ app.listen(HTTP_PORT, function onHttpStart() {
     console.log("Express http server listening on: " + HTTP_PORT);
     return new Promise((res,req) => {
         dataService.initialize().then(()=> {
-            console.log("connected to dataService. step-1");
+            console.log(chalk.green("connected to dataService. step-1"));
         }).catch((err) => {
             console.log(err);
         });
         dataServiceComments.initialize().then(()=>{
             console.log("connected to dataServiceComments. step-2");
-           
         }).catch((err)=>{
             console.log(err);
+        });
+        dataServiceAuth.initialize().then(() => {
+            console.log("\n");
+            console.log(chalk.green("====================================================================="));
+            console.log(chalk.green(">>> Call initialize Suceess!!! where from data-service-auth.js    <<<"));
+            console.log(chalk.green("====================================================================="));
+            console.log("\n");
+           }).catch((err) => {
+               console.log(err);
         });
             console.log("!!!!!!!!!!!!!!!2 steps gone through. whole initializes works well!!!!!");
     });
@@ -116,18 +124,18 @@ app.get("/about", (req, res) => {
 });
 // NEW ROUTES FOR ASSIGNMENT 3 ///////////////////
 
-app.get("/employees", (req, res) => {
+app.get("/employees", ensureLogin, (req, res) => {
 
 
   if (req.query.status) {
-    dataService.getEmployeesByStatus(req.query.status).ensureLogin.then((data) => {
+    dataService.getEmployeesByStatus(req.query.status).then((data) => {
       res.render("employeeList", { data: data, title: "Employees", user: req.session.user});
     }).catch((err) => {
       res.render("employeeList", { data: {}, title: "Employees" });
     });
 
   } else if (req.query.department) {
-    dataService.getEmployeesByDepartment(req.query.department).ensureLogin.then((data) => {
+    dataService.getEmployeesByDepartment(req.query.department).then((data) => {
       res.render("employeeList", { data: data, title: "Employees", user: req.session.user});
     }).catch((err) => {
       res.render("employeeList", { data: {}, title: "Employees" });
@@ -135,14 +143,14 @@ app.get("/employees", (req, res) => {
 
 
   } else if (req.query.manager) {
-    dataService.getEmployeesByManager(req.query.manager).ensureLogin.then((data) => {
+    dataService.getEmployeesByManager(req.query.manager).then((data) => {
       res.render("employeeList", { data: data, title: "Employees", user: req.session.user});
     }).catch((err) => {
       res.render("employeeList", { data: {}, title: "Employees" });
     });
 
   } else {
-    dataService.getAllEmployees().ensureLogin.then((data) => {
+    dataService.getAllEmployees().then((data) => {
       res.render("employeeList", { data: data, title: "Employees", user: req.session.user});
     }).catch((err) => {
       res.render("employeeList", { data: {}, title: "Employees" });
@@ -152,7 +160,7 @@ app.get("/employees", (req, res) => {
 
 });
 
-app.get("/employee/:empNum", (req, res) => {
+app.get("/employee/:empNum", ensureLogin, (req, res) => {
     // initialize an empty object to store the values
     let viewData = {};
     dataService.getEmployeeByNum(req.params.empNum).then((data) => {
@@ -169,12 +177,10 @@ app.get("/employee/:empNum", (req, res) => {
                 viewData.departments[i].selected = true;
             }
         }
-      
     }).catch(() => {
         viewData.departments = []; // set departments to empty if there was an error
     }).then(() => {
         if (viewData.data == null){ // if no employee - return an error
-           
             res.status(404).send("Employee Not Found!!!");
         } else {
              res.render("employee", { viewData: viewData, user: req.session.user}); // render the "employee" view
@@ -202,9 +208,9 @@ app.get("/managers", ensureLogin,(req, res) => {
 
 });  // (view an employee by employeeId)
 
-app.get("/departments", (req, res) => {
+app.get("/departments", ensureLogin, (req, res) => {
 
-  dataService.getDepartments().ensureLogin.then((data) => {
+  dataService.getDepartments().then((data) => {
     res.render("departmentList", { data: data, title: "Departments", user: req.session.user});
   }).catch((err) => {
     res.render("departmentList", { data: {}, title: "Departments" });
@@ -212,21 +218,21 @@ app.get("/departments", (req, res) => {
 });
 
 
-app.get("/employees/add", (req, res) => {
-    dataService.getDepartments().ensureLogin.then((data) => {
+app.get("/employees/add", ensureLogin, (req, res) => {
+    dataService.getDepartments().then((data) => {
         res.render("addEmployee",{departments: data, user: req.session.user});
     }).catch((err) => {
         res.render("addEmployee", {departments: []});
     });
 });
 
-app.post("/employees/add", (req, res) => {
+app.post("/employees/add", ensureLogin, (req, res) => {
   dataService.addEmployee(req.body).then(()=>{
     res.redirect("/employees");
   });
 });
 
-app.post("/employee/update", (req, res) => {
+app.post("/employee/update", ensureLogin, (req, res) => {
   dataService.updateEmployee(req.body).then( (data) => {
       console.log(req.body);
       res.redirect("/employees");
@@ -236,12 +242,12 @@ app.post("/employee/update", (req, res) => {
 });
 
 
-app.get("/departments/add", (req, res) => {
+app.get("/departments/add", ensureLogin, (req, res) => {
     res.render("addDepartments", {title: "Department"});
 });
 
 
-app.post("/departments/add", (req, res) => {
+app.post("/departments/add", ensureLogin, (req, res) => {
     dataService.addDepartment(req.body).then((data) => {
         res.redirect("/departments");
     }).catch(() => {
@@ -250,14 +256,14 @@ app.post("/departments/add", (req, res) => {
 });
 
 
-app.post("/department/update", (req,res) => {
+app.post("/department/update", ensureLogin, (req,res) => {
     dataService.updateDepartment(req.body).then((data) => {
         res.redirect("/departments");
     });
 });
 
 
-app.get("/department/:departmentId", (req, res) => {
+app.get("/department/:departmentId", ensureLogin, (req, res) => {
     dataService.getDepartmentById(req.params.departmentId).then((data) => {
         res.render("department", {
            data: data
@@ -268,7 +274,7 @@ app.get("/department/:departmentId", (req, res) => {
 });
 
 
-app.get("/employee/delete/:empNum", (req, res) => {
+app.get("/employee/delete/:empNum", ensureLogin, (req, res) => {
     dataService.deleteEmployeeByNum(req.params.empNum).then((data) => {
         res.redirect("/employees");
     }).catch((err) => {
@@ -312,7 +318,7 @@ app.post("/register", (req, res) => {
 
 app.post("/login", (req, res) => {
 
-    /*dataServiceAuth.checkUser(req.body).then(() => {
+    dataServiceAuth.checkUser(req.body).then(() => {
         const username = req.body.user;
         req.session.user = {
             username: username
@@ -321,7 +327,7 @@ app.post("/login", (req, res) => {
         res.redirect("/employees");
     }).catch((err) => {
         res.render("login", {errorMessage: err, user: req.body.user});
-    });*/
+    });
 });
 
 app.get("/logout", (req, res) => {
