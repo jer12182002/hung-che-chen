@@ -35,6 +35,10 @@ const user = {
   username: ""
 };
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended:true }));
+
+
 // Load CSS file
 app.use(express.static('public'));
 
@@ -324,6 +328,22 @@ app.post("/login", (req, res) => {
         res.redirect("/employees");
     }).catch((err) => {
         res.render("login", {errorMessage: err, user: req.body.user});
+    });
+});
+
+app.post("/api/updatePassword", (req, res) =>{
+    dataServiceAuth.checkUser({ user: req.body.user, password: req.body.currentPassword}).then(() => {
+        console.log(chalk.bgBlue("The_password_already_checked"));
+        dataServiceAuth.updatePassword(req.body).then(() => {
+            console.log(chalk.bgBlue(">>>Now Update the password!!!!"));
+            console.log(chalk.yellow(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+req.body.user));
+            res.send({successMessage: "Password changed successfully for user: ", user: req.body.user});
+        }).catch((err) => {
+            console.log(chalk.red(">>>Error Update the password!!!!"));
+            res.send({errorMessage: err});
+        });
+    }).catch((err) => {
+        reject({errorMessage: err});
     });
 });
 

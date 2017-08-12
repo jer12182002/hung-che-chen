@@ -1,13 +1,55 @@
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
   
 <head>
      <title>WEB322 App</title>
    <meta charset="UTF-8" />
+   <script type="text/javascript">
+    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+function hidePasswordMessages(){
+    console.log("=============================================\n");
+    console.log("                This is hidePasswordMessages \n");
+    console.log("=============================================\n");
+    $("#passwordChangeSuccess").addClass("hide");
+    $("#passwordChangeError").addClass("hide");
+}
+
+function requestPasswordChange(username) {
+    console.log("=============================================\n");
+    console.log("                This is requestPasswordChange\n");
+    console.log("=============================================\n");
+    $.ajax({
+        url: "/api/updatePassword",
+        type: "POST",
+        data: JSON.stringify({
+            user: username,
+            currentPassword: $("#currentPassword").val(),
+            password: $("#password").val(),
+            password2: $("#password2").val(),
+        }),
+        contentType: "application/json"
+    }).done(function (data) {
+        console.log(data);
+        hidePasswordMessages();
+        if(data.successMessage){
+            $("#passwordChangeSuccess").removeClass("hide").children(".alert").text(data.successMessage+data.user);
+        }else if(data.errorMessage){
+            $("#passwordChangeError").removeClass("hide").children(".alert").text(data.errorMessage+data.user);
+        }
+    }).fail(function (jqXHR) {
+        $("#passwordChangeError").removeClass("hide").children(".alert").text("AJAX Error: " + jqXHR.responseText);
+    });
+}
+
+$(document).ready(function () {
+    $('#profileModal').on('hidden.bs.modal', function (e) {
+        $(".passwordReset").val("");
+        hidePasswordMessages();
+    })
+});
+   </script>
+   <script type="text/javascript" src="/js/main.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="crossorigin="anonymous"></script>
    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" type="text/css" />
    <link rel="stylesheet" href="/css/site.css" type="text/css">
    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
@@ -20,7 +62,69 @@
 				<div class="col-md-12">
 					<h1>myApp</h1>
 					{{#if user.username}}
-                    <span class="pull-right"><a href="/logout" class="btn btn-primary">&nbsp;&nbsp;&nbsp;Log Out:&nbsp;{{user.username}}&nbsp;&nbsp;&nbsp;</a></span>
+                        <span class="pull-right">
+                            <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true">{{user.username}}<span class="caret"></span>
+                            </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    <li data-toggle="modal" data-target="#profileModal"><a href="#">Profile</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="/logout">logout</a></li>
+                                </ul>
+                            </div>
+                        </span>
+                    {{#if user.username}}
+                        <div class="modal fade" id="profileModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="profileModalTitle">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <form onsubmit="requestPasswordChange('{{user.username}}'); return false;">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" id="profileModalTitle">Profile</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label>User Name:</label>
+                                                        <input type="text" disabled class="form-control" value="qwe">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <label>Update Password:</label>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <input type="password" class="passwordReset form-control" id="currentPassword" placeholder="Current Password">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <input type="password" class="passwordReset form-control" id="password" placeholder="New Password">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <input type="password" class="passwordReset form-control" id="password2" placeholder="Confirm Password">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 hide" id="passwordChangeError">
+                                                    <div class="alert alert-danger"></div>
+                                                </div>
+                                                <div class="col-md-12 hide" id="passwordChangeSuccess">
+                                                    <div class="alert alert-success"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-success">Save changes</button>
+                                        </div>
+                                    </form>
+                                </div>
+                         </div>
+                    </div>
+                    {{/if}}
                     {{else}}
                     <span class="pull-right"><a class="btn btn-success" href="/login">&nbsp;&nbsp;&nbsp;Login&nbsp;&nbsp;&nbsp;</a>
                     <a class="btn btn-primary" href="/register">&nbsp;&nbsp;&nbsp;Register&nbsp;&nbsp;&nbsp;</a></span>
