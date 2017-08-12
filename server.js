@@ -1,10 +1,10 @@
 /*********************************************************************************
-* WEB322 – Assignment 06 
+* WEB322 – Assignment 08 
 * I declare that this assignment is my own work in accordance with Seneca Academic Policy. No part of this 
 * assignment has been copied manually or electronically from any other source (including web sites) or 
 * distributed to other students. 
 *
-* Name: _HUNG-CHE,CHEN_____ Student ID: _115472169___ Date: __2017/07/08____ 
+* Name: _HUNG-CHE,CHEN_____ Student ID: _115472169___ Date: __2017/07/11____ 
 *
 * Online (Heroku) Link: https://warm-taiga-21988.herokuapp.com/
 * ********************************************************************************/
