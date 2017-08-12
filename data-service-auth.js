@@ -14,14 +14,6 @@ var Comment; // to be defined on new connection (see initialize)
 var dbURI = "mongodb://web322_18:hchen224@ds051903.mlab.com:51903/web322_a7";
 
 module.exports.initialize = () => {
-    console.log("============================================");
-    console.log("===                                      ===");
-    console.log("===    MongoDB for auth initialize       ===");
-    console.log("===                                      ===");
-    console.log("============================================");
-    console.log("\n")
-    console.log(">>> DB dbURI: " + dbURI + " <<<");
-    console.log("\n")
     return new Promise((resolve, reject) => {
         let db = mongoose.createConnection(dbURI);
         db.on('error', (err) => {
@@ -36,12 +28,6 @@ module.exports.initialize = () => {
 };
 
 module.exports.registerUser = (userData) => {
-    console.log("============================================");
-    console.log("===                                      ===");
-    console.log("===           registerUser Function      ===");
-    console.log("===                                      ===");
-    console.log("============================================");
-    console.log("\n");
     return new Promise((resolve, reject) => {
         if (userData.password != userData.password2) {
             reject("Passwords do not match.");
@@ -57,12 +43,6 @@ module.exports.registerUser = (userData) => {
                     newUser.password = hash;
                     console.log(chalk.red(newUser));
                     newUser.save((err) => {
-                        console.log(chalk.blue("===   Object is saving in the database.  ==="));
-                        console.log(chalk.blue("============================================"));
-                        console.log(userData);
-                        console.log(chalk.blue("============================================"));
-                        console.log(chalk.blue("This is User object id from userSchema: " + newUser._id));
-                        console.log(chalk.green(newUser));
                         resolve();
                     }).catch((err) => {
                         if (err) {
@@ -80,11 +60,6 @@ module.exports.registerUser = (userData) => {
     }
 
 module.exports.checkUser = (userData) =>{
-    console.log(chalk.blue("============================================="));
-    console.log(chalk.blue("===                                       ==="));
-    console.log(chalk.blue("===     This is checkUser function        ==="));
-    console.log(chalk.blue("===                                       ==="));
-    console.log(chalk.blue("============================================="));
     console.log(">>> userName: " + chalk.green(userData.user) + " <<<");
     console.log(">>> userName: " + chalk.green(userData.password) + " <<<");
 
@@ -95,7 +70,6 @@ module.exports.checkUser = (userData) =>{
             reject('Unable to find user: ' + userData.user);
         } else {
            hash = user[0].password;
-            console.log(chalk.yellow("++++++++++++++++++++++++++++++++++++++++++++" + user[0].password));
 
             bcrypt.compare(user[0].password, hash).then((res) => {
                 res === true; //if it matches and res === false if it does not match
@@ -104,8 +78,7 @@ module.exports.checkUser = (userData) =>{
             });
 
             bcrypt.compare(user[0].password, hash).then((res) => {
-                res === false; //if it matches and res === false if it does not match
-                console.log(chalk.red(">>>>>>>>>>>>>>>>>>>>"+ hash));
+                res === false; 
                 reject("Unable to find user: " + userData.user);
             });
         }
