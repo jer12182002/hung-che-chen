@@ -9,23 +9,15 @@ var userSchema = new Schema({
     "user": {type: String, unique: true},
     "password": String
 });
-var Comment; // to be defined on new connection (see initialize)
+var Comment; 
 
 var dbURI = "mongodb://web322_18:hchen224@ds051903.mlab.com:51903/web322_a7";
 
 module.exports.initialize = () => {
-    console.log("============================================");
-    console.log("===                                      ===");
-    console.log("===    MongoDB for auth initialize       ===");
-    console.log("===                                      ===");
-    console.log("============================================");
-    console.log("\n")
-    console.log(">>> DB dbURI: " + dbURI + " <<<");
-    console.log("\n")
     return new Promise((resolve, reject) => {
         let db = mongoose.createConnection(dbURI);
         db.on('error', (err) => {
-            reject(err); // reject the promise with the provided error
+            reject(err); 
         });
         db.once('open', () => {
             Comment = db.model("users", userSchema);
@@ -36,33 +28,20 @@ module.exports.initialize = () => {
 };
 
 module.exports.registerUser = (userData) => {
-    console.log("============================================");
-    console.log("===                                      ===");
-    console.log("===           registerUser Function      ===");
-    console.log("===                                      ===");
-    console.log("============================================");
-    console.log("\n");
     return new Promise((resolve, reject) => {
         if (userData.password != userData.password2) {
             reject("Passwords do not match.");
         } else {
             let newUser = new Comment(userData);
-             bcrypt.genSalt(10, function(err, salt) { // Generate a "salt" using 10 rounds
+             bcrypt.genSalt(10, function(err, salt) { 
                 if (err) {
                     reject("There was an error encrypting the password");
                 }
-                bcrypt.hash(userData.password, salt, function(err, hash) { // encrypt the password: "myPassword123"
-                    // TODO: Store the resulting "hash" value in the DB
+                bcrypt.hash(userData.password, salt, function(err, hash) { 
                     console.log(chalk.yellow(hash));
                     newUser.password = hash;
                     console.log(chalk.red(newUser));
                     newUser.save((err) => {
-                        console.log(chalk.blue("===   Object is saving in the database.  ==="));
-                        console.log(chalk.blue("============================================"));
-                        console.log(userData);
-                        console.log(chalk.blue("============================================"));
-                        console.log(chalk.blue("This is User object id from userSchema: " + newUser._id));
-                        console.log(chalk.green(newUser));
                         resolve();
                     }).catch((err) => {
                         if (err) {
@@ -72,7 +51,7 @@ module.exports.registerUser = (userData) => {
                                 reject("There was an error creating the user: ${user}");
                             }
                         }
-            // reject("There was an error creating the user222222");
+          
                     });
                 });
              });
@@ -80,15 +59,6 @@ module.exports.registerUser = (userData) => {
     }
 
 module.exports.checkUser = (userData) =>{
-    console.log(chalk.yellow(JSON.stringify(userData)));
-    console.log(chalk.blue("============================================="));
-    console.log(chalk.blue("===                                       ==="));
-    console.log(chalk.blue("===     This is checkUser function        ==="));
-    console.log(chalk.blue("===                                       ==="));
-    console.log(chalk.blue("============================================="));
-    console.log(">>> userName: " + chalk.green(userData.user) + " <<<");
-    console.log(">>> userPassword: " + chalk.green(userData.password) + " <<<");
-
     return new Promise((resolve, reject) => {
         Comment.find({user: userData.user}).exec().then((user) => {
         console.log(chalk.bgCyan("Sucess!!!!!!" + user));
@@ -96,19 +66,15 @@ module.exports.checkUser = (userData) =>{
             reject('Unable to find user: ' + userData.user);
         } else {
            hash = user[0].password;
-            console.log(chalk.yellow("++++++++++++++++++++++++++++++++++++++++++++" + user[0].password));
-            console.log(chalk.yellow("++++++++++++++++++++++++++++++++++++++++++++" + userData.password));
-            console.log(chalk.yellow("++++++++++++++++++++++++++++++++++++++++++++" + hash));
 
-            bcrypt.compare("123", hash).then((res) => {
-                res === true; //if it matches and res === false if it does not match
+            bcrypt.compare(user[0].password, hash).then((res) => {
+                res === true; 
                 console.log(chalk.bgCyan(hash));
                 resolve();
             });
 
-            bcrypt.compare("123", hash).err((res) => {
-                res === false; //if it matches and res === false if it does not match
-                console.log(chalk.red(">>>>>>>>>>>>>>>>>>>>"+ hash));
+            bcrypt.compare(user[0].password, hash).then((res) => {
+                res === false; 
                 reject("Unable to find user: " + userData.user);
             });
         }
