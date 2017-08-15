@@ -80,13 +80,14 @@ module.exports.registerUser = (userData) => {
     }
 
 module.exports.checkUser = (userData) =>{
+    console.log(chalk.yellow(JSON.stringify(userData)));
     console.log(chalk.blue("============================================="));
     console.log(chalk.blue("===                                       ==="));
     console.log(chalk.blue("===     This is checkUser function        ==="));
     console.log(chalk.blue("===                                       ==="));
     console.log(chalk.blue("============================================="));
     console.log(">>> userName: " + chalk.green(userData.user) + " <<<");
-    console.log(">>> userName: " + chalk.green(userData.password) + " <<<");
+    console.log(">>> userPassword: " + chalk.green(userData.password) + " <<<");
 
     return new Promise((resolve, reject) => {
         Comment.find({user: userData.user}).exec().then((user) => {
@@ -96,14 +97,16 @@ module.exports.checkUser = (userData) =>{
         } else {
            hash = user[0].password;
             console.log(chalk.yellow("++++++++++++++++++++++++++++++++++++++++++++" + user[0].password));
+            console.log(chalk.yellow("++++++++++++++++++++++++++++++++++++++++++++" + userData.password));
+            console.log(chalk.yellow("++++++++++++++++++++++++++++++++++++++++++++" + hash));
 
-            bcrypt.compare(user[0].password, hash).then((res) => {
+            bcrypt.compare("123", hash).then((res) => {
                 res === true; //if it matches and res === false if it does not match
                 console.log(chalk.bgCyan(hash));
                 resolve();
             });
 
-            bcrypt.compare(user[0].password, hash).then((res) => {
+            bcrypt.compare("123", hash).err((res) => {
                 res === false; //if it matches and res === false if it does not match
                 console.log(chalk.red(">>>>>>>>>>>>>>>>>>>>"+ hash));
                 reject("Unable to find user: " + userData.user);

@@ -318,16 +318,15 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
+
     dataServiceAuth.checkUser(req.body).then(() => {
         const username = req.body.user;
-        // console.log(chalk.bgGreen(JSON.stringify(req.body.user)));
         req.session.user = {
             username: username
         };
         console.log(chalk.bgGreen(JSON.stringify(req.session)));
         res.redirect("/employees");
     }).catch((err) => {
-        // res.send(22222222222222222);
         res.render("login", {errorMessage: err, user: req.body.user});
     });
 });
